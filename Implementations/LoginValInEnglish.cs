@@ -11,20 +11,22 @@ namespace AtmConsoleAppInThreeLanguages.Implementations
         /// <summary>
         /// Action Event declaration
         /// </summary>
-    private event Action<string> ErrorMessage;
-    private event Action<string> SuccessMessage;
+        private event Action<string> ErrorMessage;
+        private event Action<string> SuccessMessage;
 
         public List<UserAccount> _userAccountList;
         private int _userAccountNumberInput;
         private int _userCardPin;
         private static string? Options { get; set; }
         private static int UserInput { get; set; }
-
+        public static UserAccount ReturnUser {get; set;}
         /// <summary>
         /// Action delegates for printing messages to user
         /// </summary>
-    
 
+        public virtual void LogError(Action<string> method) => ErrorMessage += method;
+
+        protected virtual void OnError(string message) => ErrorMessage.Invoke(message);
         public LoginValInEnglish()
         {
             _userAccountList = new List<UserAccount>()
@@ -67,6 +69,8 @@ namespace AtmConsoleAppInThreeLanguages.Implementations
             };
         }
 
+
+
         public void LoginVal()
         {
             LoginValInEnglish ValEnglish = new();
@@ -80,11 +84,12 @@ namespace AtmConsoleAppInThreeLanguages.Implementations
                 _userCardPin = int.Parse(Console.ReadLine() ?? string.Empty);
 
                 var unicUser = _userAccountList.FirstOrDefault(user => user.AccountNumber == _userAccountNumberInput);
+                ReturnUser = unicUser;
                 if (unicUser == null)
                 {
                     Console.Clear();
+                    /*ValEnglish.OnError($"Error Message from Action custom delegate");*/
                     Program.Message("\nError:\t", "User does'nt Exist");
-                    ValEnglish.OnError($"Error Message from Action custom delegate");
                     LoginVal();
                 }
                 if (unicUser?.CardPin != _userCardPin)
@@ -136,7 +141,6 @@ namespace AtmConsoleAppInThreeLanguages.Implementations
                         ChooseTransactionTypeEnglish.CheckBalance(account.AccountBalance, account.FullName);
                         break;
                     default:
-                        ValEnglish.OnError($"Error Message from Action custom delegate{account}");
                         Console.Clear();
                         Console.WriteLine("Entered value is not in the case");
                         goto start;
@@ -145,14 +149,12 @@ namespace AtmConsoleAppInThreeLanguages.Implementations
             }
             catch (Exception exception)
             {
-                ValEnglish.OnError("Error Message from Action custom delegate");
+                ValEnglish.OnError($"Error Message from Action custom delegate");
                 Program.Message("\nError:\t", $"{exception.Message} Here Men");
                 goto start;
             }       
 
         }
-        public void LogError(Action<string> method) => ErrorMessage += method;
-
-        public void OnError(string message) => ErrorMessage?.Invoke(message);
+     
     }
 }

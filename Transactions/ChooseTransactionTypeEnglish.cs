@@ -18,19 +18,8 @@ namespace AtmConsoleAppInThreeLanguages.Transactions
 
         public static void CheckBalance(decimal accountBalance, string userfullName)
         {
-            Start: try
-            {
                 Console.WriteLine($"{userfullName} Your new balance is {accountBalance}");
-
-
-            }
-            catch (Exception ex)
-            {
-
-                Console.WriteLine(ex.Message);
-                goto Start;
-            }
-
+            LoginValInEnglish.GetUser(LoginValInEnglish.ReturnUser, LoginValInEnglish.ReturnUser.AccountNumber);
         }
 
         public static void Deposit(int AccountNumber, decimal AccountBalance, string AccountFullName)
@@ -38,21 +27,14 @@ namespace AtmConsoleAppInThreeLanguages.Transactions
 start:
             try
             {
-
                 Console.WriteLine("Enter Amount");
                 int AmountToDeposit = Convert.ToInt32(Console.ReadLine());
                 Console.WriteLine("Enter Your Account Number");
 
                 int DepositAccountNumber = Convert.ToInt32(Console.ReadLine());
-                if (AccountNumber.Equals(DepositAccountNumber))
-                {
-                    decimal newBalance = AccountBalance + AmountToDeposit;
+                    decimal newBalance = AccountBalance += AmountToDeposit;
                     Program.Message($"\n{AccountFullName}\t", $"Your made a deposit of {AmountToDeposit} in your account. Your new balance is\t : {newBalance} ");
-                }
-                else
-                {
-                    Program.Message("\nError:\t", "Try Again\n");
-                }
+                    LoginValInEnglish.GetUser(LoginValInEnglish.ReturnUser, LoginValInEnglish.ReturnUser.AccountNumber);
             }
             catch (Exception errorException)
             {
@@ -71,6 +53,7 @@ start:
                 int amountToWidthraw = Convert.ToInt32(Console.ReadLine());
                     decimal newBalance = AccountBalance -= amountToWidthraw;
                     Program.Message($"\n{AccountFullName}\t", $"Your just withdrawed {amountToWidthraw} from your account, your new balance is:\t {newBalance} ");
+                LoginValInEnglish.GetUser(LoginValInEnglish.ReturnUser, LoginValInEnglish.ReturnUser.AccountNumber); ;
             }
             catch (Exception errorException)
             {
@@ -88,14 +71,12 @@ start:
                 var account = loginValidation._userAccountList;
                 foreach (var user in account)
                 {
-
-
                     Console.WriteLine("Enter Amount");
                     decimal AmountToTransfer = Convert.ToDecimal(Console.ReadLine());
                     Console.WriteLine("Enter Your Account Number");
 
                     int ReceiverAccountNumberInput = Convert.ToInt32(Console.ReadLine());
-                    var currentUser = account.First(specificUser => specificUser.AccountNumber == ReceiverAccountNumberInput);
+                    var currentUser = account.FirstOrDefault(specificUser => specificUser.AccountNumber == ReceiverAccountNumberInput);
                     if (SenderAccountNumber == currentUser.AccountNumber)
                     {
                         Console.WriteLine("You Cannot Transfer money to your self");
@@ -110,6 +91,7 @@ start:
                         SenderAccountBalance -= AmountToTransfer;
                         Console.WriteLine($"{SenderFullName} you just sent {AmountToTransfer} to {currentUser.FullName} and {AmountToTransfer} has been depisted from your account");
                         Program.Message($"\n{SenderFullName} Your new balance is", $"{SenderAccountBalance}");
+
                     }
                     LoginValInEnglish.GetUser(user, user.AccountNumber);
                 }
